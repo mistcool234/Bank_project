@@ -97,5 +97,17 @@ if st.button("Withdraw"):
             st.success(f"Withdrew ${amount}. Updated Current Account Balance: ${st.session_state['current_balance']}")
         else:
             st.error("Insufficient funds.")
+if st.button("Apply Interest (Savings Only)"):
+    if account_type == "Savings":
+        interest = st.session_state["savings_balance"] * savings.interest_rate
+        st.session_state["savings_balance"] += interest
+        st.success(f"Applied interest of ${interest}. Updated Savings Account Balance: ${st.session_state['savings_balance']}")
+    else:
+        st.error("Interest can only be applied to Savings Account.")
 
+if st.button("Show Balance"):
+    if account_type == "Savings":
+        st.info(f"Savings Account Balance: ${st.session_state['savings_balance']}")
+    elif account_type == "Current":
+        st.info(f"Current Account Balance: ${st.session_state['current_balance']}")
 
