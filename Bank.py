@@ -59,5 +59,43 @@ class CurrentAccount(Account):
             return "Overdraft limit exceeded."
         else:
             return "Withdrawal amount must be positive."
+# Streamlit GUI
+savings = SavingsAccount("Alice", "S123", 1000)
+current = CurrentAccount("Bob", "C456", 500)
+
+# Initialize session state for balances
+if "savings_balance" not in st.session_state:
+    st.session_state["savings_balance"] = savings.get_balance()
+if "current_balance" not in st.session_state:
+    st.session_state["current_balance"] = current.get_balance()
+
+st.title("Rising Phonix Bank")
+
+account_type = st.radio("Select Account Type:", ["Savings", "Current"])
+amount = st.number_input("Enter Amount:", min_value=0.0, step=0.01)
+
+if st.button("Deposit"):
+    if account_type == "Savings":
+        st.session_state["savings_balance"] += amount
+        st.success(f"Deposited ${amount}. Updated Savings Account Balance: ${st.session_state['savings_balance']}")
+    elif account_type == "Current":
+        st.session_state["current_balance"] += amount
+        st.success(f"Deposited ${amount}. Updated Current Account Balance: ${st.session_state['current_balance']}")
+
+if st.button("Withdraw"):
+    if account_type == "Savings":
+        if amount > savings.withdraw_limit:
+            st.error(f"You cannot withdraw more than ${savings.withdraw_limit} at a time.")
+        elif amount <= st.session_state["savings_balance"]:
+            st.session_state["savings_balance"] -= amount
+            st.success(f"Withdrew ${amount}. Updated Savings Account Balance: ${st.session_state['savings_balance']}")
+        else:
+            st.error("Insufficient funds.")
+    elif account_type == "Current":
+        if amount <= st.session_state["current_balance"]:
+            st.session_state["current_balance"] -= amount
+            st.success(f"Withdrew ${amount}. Updated Current Account Balance: ${st.session_state['current_balance']}")
+        else:
+            st.error("Insufficient funds.")
 
 
