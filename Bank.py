@@ -45,3 +45,19 @@ class SavingsAccount(Account):
         interest = self.balance * self.interest_rate
         self.balance += interest
         return f"Applied interest of ${interest}. New balance: ${self.balance}"
+        
+class CurrentAccount(Account):
+    def __init__(self, account_holder, account_number, balance=0, overdraft_limit=500):
+        super().__init__(account_holder, account_number, balance)
+        self.overdraft_limit = overdraft_limit
+
+    def withdraw(self, amount):
+        if amount > 0 and amount <= self.balance + self.overdraft_limit:
+            self.balance -= amount
+            return f"Withdrew ${amount}. New balance: ${self.balance}"
+        elif amount > self.balance + self.overdraft_limit:
+            return "Overdraft limit exceeded."
+        else:
+            return "Withdrawal amount must be positive."
+
+
